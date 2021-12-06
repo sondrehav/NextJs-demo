@@ -1,3 +1,3 @@
-Interface for viewing Crystallize data.
+# NextJs demo app!
 
-Check it out here: https://bos.havellen.no
+Gå til [nextjs.havellen.no](https://nextjs.havellen.no) for å sjekke ut!
