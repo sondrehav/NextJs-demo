@@ -4,19 +4,20 @@ import {ComponentType, DatetimeContent, ImageContent, Item, RichTextContent, Sin
 import DateComponent from "components/date";
 import ContentTransformer, {ContentTransformerProps} from "components/contentTransformer";
 import ImageView from "components/imageView";
+import classNames from "classnames";
+import {container} from "lib/classes";
 
 const AlbumPage = (item: Item) => {
 
   const title= findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "title")?.text ?? name;
   const content = findComponent<RichTextContent>(item.components ?? [] , ComponentType.RichText, "content")?.json;
-  const date = findComponent<DatetimeContent>(item.components ?? [], ComponentType.Datetime, "created-on")?.datetime;
   const images = findComponent<ImageContent>(item.components ?? [], ComponentType.Images, "images")?.images;
   const author = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author")?.text;
   const authorContact = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author-contact")?.text;
 
   return (<Layout item={item}>
-    <div className={"sm:container mx-2 md:mx-auto my-6 overflow-x-hidden"}>
-      {date && <span className={"opacity-50"}><i>Created on <DateComponent dateString={date}/></i></span>}
+    <div className={classNames(container, "my-6 overflow-x-hidden")}>
+      {item.createdAt && <span className={"opacity-50"}><i>Opprettet <DateComponent dateString={item.createdAt}/></i></span>}
       {images && <ImageView images={images}/>}
       <section className={""}>
         {author && <h3>Av {author}</h3>}

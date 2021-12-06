@@ -3,6 +3,7 @@ query Catalogue($path: String!) {
     id
     name
     path
+    createdAt
     shape {
       identifier
     }
