@@ -1,0 +1,14 @@
+# Write your query or mutation here
+query Search {
+  search(filter: {
+    include: {
+      shapeIdentifiers: ["album", "albumcollection"]
+    }
+  }) {
+    edges {
+      node {
+        path
+      }
+    }
+  }
+}

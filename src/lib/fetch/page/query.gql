@@ -1,0 +1,82 @@
+query Catalogue($path: String!) {
+  catalogue(path: $path) {
+    id
+    name
+    path
+    shape {
+      identifier
+    }
+    components {
+      id
+      type
+      name
+      content {
+        ... on SingleLineContent { text }
+        ... on RichTextContent { json}
+        ... on ItemRelationsContent { items { ...links } }
+        ... on ImageContent { images { ...imageVariant } firstImage { ...imageVariant } }
+        ... on DatetimeContent { datetime }
+      }
+    }
+    children {
+      id
+      name
+      type
+      path
+      createdAt
+      components {
+        id
+        type
+        name
+        content {
+          ... on SingleLineContent { text }
+          ... on ImageContent { firstImage { ...imageVariant } }
+        }
+      }
+    }
+  }
+}
+
+fragment relation on Item {
+  name
+  path
+  shape {
+    identifier
+  }
+}
+
+fragment imageVariant on Image {
+  url altText variants { width height url }
+}
+
+#todo: Apollo Client to prevent nested queries like this..
+
+fragment links on Item {
+  ...relation
+  components {
+    id
+    type
+    name
+    content {
+      ... on SingleLineContent {
+        text
+      }
+      ... on ItemRelationsContent {
+        items {
+          ... on Item {
+            name path components {
+              id
+              name
+              type
+              content {
+                ... on SingleLineContent {
+                  text
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

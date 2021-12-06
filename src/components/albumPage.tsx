@@ -1,0 +1,32 @@
+import Layout from "components/layout";
+import findComponent from "lib/findComponent";
+import {ComponentType, DatetimeContent, ImageContent, Item, RichTextContent, SingleLineContent} from "types/catalogue";
+import DateComponent from "components/date";
+import ContentTransformer, {ContentTransformerProps} from "components/contentTransformer";
+import ImageView from "components/imageView";
+
+const AlbumPage = (item: Item) => {
+
+  const title= findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "title")?.text ?? name;
+  const content = findComponent<RichTextContent>(item.components ?? [] , ComponentType.RichText, "content")?.json;
+  const date = findComponent<DatetimeContent>(item.components ?? [], ComponentType.Datetime, "created-on")?.datetime;
+  const images = findComponent<ImageContent>(item.components ?? [], ComponentType.Images, "images")?.images;
+  const author = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author")?.text;
+  const authorContact = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author-contact")?.text;
+
+  return (<Layout item={item}>
+    <div className={"sm:container mx-2 md:mx-auto my-6 overflow-x-hidden"}>
+      {date && <span className={"opacity-50"}><i>Created on <DateComponent dateString={date}/></i></span>}
+      {images && <ImageView images={images}/>}
+      <section className={""}>
+        {author && <h3>Av {author}</h3>}
+        {authorContact && <a href={`mailto:${authorContact}`}><span className={"text-sm text-gray-500"}>{authorContact}</span></a>}
+      </section>
+      {title && <h1 className={"text-3xl my-8"}>{title}</h1>}
+      {content && <ContentTransformer json={content as ContentTransformerProps["json"]}/>}
+    </div>
+  </Layout>)
+
+};
+
+export default AlbumPage;
