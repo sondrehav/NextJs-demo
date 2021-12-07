@@ -3,7 +3,7 @@ import {
   Overrides,
   Props as CProps
 } from "@crystallize/react-content-transformer";
-import SyntaxHighlighter from "react-syntax-highlighter";
+import { Prism as  SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula as theme } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import Link from "next/link";
 
@@ -29,7 +29,7 @@ const LinkContent = (props: NodeProps) => {
 };
 const QuoteContent = (props: NodeProps) => <p className={"border-l-2 px-4 my-4 border-gray-300 "}><i><NodeContent {...props} /></i></p>;
 const ParagraphContent = (props: NodeProps) => <p className={"my-4"}><NodeContent {...props} /></p>;
-const CodeContent = (props: NodeProps) => <SyntaxHighlighter showLineNumbers language="tsx" style={theme}>
+const CodeContent = (props: NodeProps) => <SyntaxHighlighter showLineNumbers language={"tsx"} style={theme}>
   {props.children?.filter(s => s.type !== "line-break").map(c => c.textContent).join("\n") ?? ""}
 </SyntaxHighlighter>;
 const UListContent = (props: NodeProps) => <ul className={"list-disc"}>
@@ -42,6 +42,9 @@ const OListContent = (props: NodeProps) => <ul className={"list-decimal"}>
     <NodeContent {...c}/>
   </li>)}
 </ul>;
+const InlineCodeContent = (props: NodeProps) => {
+  return <code className={"text-blue-300"}>{props.textContent}</code>;
+};
 
 const overrides: Overrides = {
   link: LinkContent,
@@ -49,11 +52,12 @@ const overrides: Overrides = {
   paragraph: ParagraphContent,
   code: CodeContent,
   "unordered-list": UListContent,
-  "ordered-list": OListContent
+  "ordered-list": OListContent,
+  underlined: InlineCodeContent
 };
 
-const ContentTransformer = (props: ContentTransformerProps) => {
-  return (<CContentTransformer {...props} overrides={overrides}/>);
-};
+  const ContentTransformer = (props: ContentTransformerProps) => {
+    return (<CContentTransformer {...props} overrides={overrides}/>);
+  };
 
 export default ContentTransformer;
