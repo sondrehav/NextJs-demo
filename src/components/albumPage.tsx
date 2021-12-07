@@ -2,40 +2,42 @@ import Layout from "components/layout";
 import findComponent from "lib/findComponent";
 import {
   ComponentType,
-  ImageContent,
   Item,
   ItemRelationsContent,
-  RichTextContent,
+  ParagraphCollectionContent,
   SingleLineContent
 } from "types/catalogue";
 import DateComponent from "components/date";
-import ContentTransformer, {ContentTransformerProps} from "components/contentTransformer";
-import ImageView from "components/imageView";
 import classNames from "classnames";
 import {container} from "lib/classes";
 import Link from "next/link";
 import ChildPageView from "components/childPageView";
+import Paragraph from "components/paragraph";
+import ArticleProfileTag from "components/articleProfileTag";
 
 const AlbumPage = (item: Item) => {
 
   const title= findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "title")?.text ?? name;
-  const content = findComponent<RichTextContent>(item.components ?? [] , ComponentType.RichText, "content")?.json;
-  const images = findComponent<ImageContent>(item.components ?? [], ComponentType.Images, "images")?.images;
-  const author = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author")?.text;
-  const authorContact = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author-contact")?.text;
+  const content = findComponent<ParagraphCollectionContent>(item.components ?? [] , ComponentType.ParagraphCollection, "page-content")?.paragraphs;
   const relatedArticles = findComponent<ItemRelationsContent>(item.components ?? [], ComponentType.ItemRelations, "related-articles")?.items;
+  const authors = findComponent<ItemRelationsContent>(item.components ?? [] , ComponentType.ItemRelations, "author")?.items;
 
   return (<Layout item={item}>
-    <div className={classNames(container, "my-6 overflow-x-hidden")}>
-      {item.createdAt && <span className={"opacity-50"}><i>Opprettet <DateComponent dateString={item.createdAt}/></i></span>}
-      {images && <ImageView images={images}/>}
-      <section>
-        {author && <h3>Av {author}</h3>}
-        {authorContact && <a href={`mailto:${authorContact}`}><span className={"text-sm text-gray-500"}>{authorContact}</span></a>}
-      </section>
-      {title && <h1 className={"text-3xl my-8"}>{title}</h1>}
-      {content && <ContentTransformer json={content as ContentTransformerProps["json"]}/>}
+
+    <div className={classNames(container, "my-6 overflow-x-hidden space-y-4")}>
+      <div className={"flex flex-row justify-between items-center my-2"}>
+        {title && <h1 className={"text-3xl"}>{title}</h1>}
+        {item.createdAt && <span className={"opacity-50"}><i>Opprettet <DateComponent dateString={item.createdAt}/></i></span>}
+      </div>
+      {authors && <div className={"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-4"}>
+        {authors.map((author, i) => <ArticleProfileTag key={i} item={author}/>)}
+      </div>}
     </div>
+
+
+    {content && <div className={classNames(container, "my-12")}>
+      {content.map((paragraph, i) => <Paragraph key={i} {...paragraph}/>)}
+    </div>}
 
     {relatedArticles && relatedArticles?.length > 0 && <>
     {title && <h2 className={classNames(container, "text-2xl my-8")}>Relaterte artikler</h2>}

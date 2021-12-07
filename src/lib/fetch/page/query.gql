@@ -14,6 +14,7 @@ query Catalogue($path: String!) {
       content {
         ... on SingleLineContent { text }
         ... on RichTextContent { json}
+        ... on ParagraphCollectionContent { paragraphs { body { json } images { ...imageVariant } title { text } } }
         ... on ItemRelationsContent { items { ...links } }
         ... on ImageContent { images { ...imageVariant } firstImage { ...imageVariant } }
         ... on DatetimeContent { datetime }
