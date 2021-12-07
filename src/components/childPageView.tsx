@@ -1,8 +1,8 @@
 import {ComponentType, ImageContent, Item, SingleLineContent} from "types/catalogue";
-import {Image, Props as ImageProps} from "@crystallize/react-image";
 import findComponent from "lib/findComponent";
 import {forwardRef, HTMLProps} from "react";
 import DateComponent from "components/date";
+import {Image} from 'components/image';
 
 type Props = { child: Item }
 const ChildPageView = forwardRef<HTMLAnchorElement, Props & Pick<HTMLProps<HTMLAnchorElement>, "onClick"|"href">>(({ child, href, onClick }, ref) => {
@@ -15,7 +15,7 @@ const ChildPageView = forwardRef<HTMLAnchorElement, Props & Pick<HTMLProps<HTMLA
 
   return (<a ref={ref} onClick={onClick} href={href} className={"rounded-xl shadow relative flex flex-col transition-all bg-gray-800 hover:bg-gray-700 overflow-hidden"}>
     {headerImage && <div className={"max-h-64 overflow-hidden"}>
-        <Image sizes={"(max-width: 600px) 40vw, 700px"} {...headerImage as ImageProps}/>
+        <Image sizes={"(max-width: 600px) 40vw, 700px"} {...headerImage}/>
       </div>
     }
     <div className={"p-4"}>

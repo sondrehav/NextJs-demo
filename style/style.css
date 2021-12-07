@@ -11,3 +11,7 @@
     font-family: "RedHatMono";
     src: url("../public/RedHatMono-VariableFont_wght.ttf");
 }
+
+.max-h-inherit {
+    max-height: inherit;
+}
