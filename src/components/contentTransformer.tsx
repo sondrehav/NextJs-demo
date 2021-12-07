@@ -9,6 +9,13 @@ import Link from "next/link";
 
 export type ContentTransformerProps = CProps;
 
+/*
+* <ul>
+  {(props.children ?? []).map((c, i) => <li key={i}>{c.textContent}</li>)}
+</ul>
+*
+* */
+
 const LinkContent = (props: NodeProps) => {
   if(!props.metadata) return null;
   if((props.metadata.href as string).startsWith("/")) {
@@ -25,16 +32,28 @@ const ParagraphContent = (props: NodeProps) => <p className={"my-4"}><NodeConten
 const CodeContent = (props: NodeProps) => <SyntaxHighlighter showLineNumbers language="tsx" style={theme}>
   {props.children?.filter(s => s.type !== "line-break").map(c => c.textContent).join("\n") ?? ""}
 </SyntaxHighlighter>;
+const UListContent = (props: NodeProps) => <ul className={"list-disc"}>
+  {(props.children ?? []).filter(c => c.type === "list-item").map((c, i) => <li key={i} className={"list-item ml-6"}>
+    <NodeContent {...c}/>
+  </li>)}
+</ul>;
+const OListContent = (props: NodeProps) => <ul className={"list-decimal"}>
+  {(props.children ?? []).filter(c => c.type === "list-item").map((c, i) => <li key={i} className={"list-item ml-6"}>
+    <NodeContent {...c}/>
+  </li>)}
+</ul>;
 
 const overrides: Overrides = {
   link: LinkContent,
   quote: QuoteContent,
   paragraph: ParagraphContent,
-  code: CodeContent
+  code: CodeContent,
+  "unordered-list": UListContent,
+  "ordered-list": OListContent
 };
 
 const ContentTransformer = (props: ContentTransformerProps) => {
-  return (<CContentTransformer className={""} {...props} overrides={overrides}/>);
+  return (<CContentTransformer {...props} overrides={overrides}/>);
 };
 
 export default ContentTransformer;
