@@ -9,7 +9,7 @@ const ChildPageView = forwardRef<HTMLAnchorElement, Props & Pick<HTMLProps<HTMLA
 
   const headerImage = findComponent<ImageContent>(child.components ?? [], ComponentType.Images, "header-image")?.firstImage;
   const title = findComponent<SingleLineContent>(child.components ?? [], ComponentType.SingleLine, "title")?.text ?? child.name;
-  const author = findComponent<SingleLineContent>(child.components ?? [], ComponentType.SingleLine, "author")?.text ?? child.name;
+  const author = findComponent<SingleLineContent>(child.components ?? [], ComponentType.SingleLine, "author")?.text;
 
   const createdAt = child.createdAt;
 
