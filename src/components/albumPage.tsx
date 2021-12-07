@@ -42,7 +42,7 @@ const AlbumPage = (item: Item) => {
     {relatedArticles && relatedArticles?.length > 0 && <>
     {title && <h2 className={classNames(container, "text-2xl my-8")}>Relaterte artikler</h2>}
     <div className={classNames(container, "my-6 overflow-x-hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-8")}>
-      {relatedArticles.map(child => <Link key={child.id} href={child.path!.replace("/web", "")} passHref><ChildPageView child={child}/></Link>)}
+      {relatedArticles.map((child) => <Link key={child.path} href={child.path!.replace("/web", "")} passHref><ChildPageView child={child}/></Link>)}
     </div>
   </>}
 
