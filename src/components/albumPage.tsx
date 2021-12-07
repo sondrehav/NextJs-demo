@@ -1,6 +1,6 @@
 import Layout from "components/layout";
 import findComponent from "lib/findComponent";
-import {ComponentType, DatetimeContent, ImageContent, Item, RichTextContent, SingleLineContent} from "types/catalogue";
+import {ComponentType, ImageContent, Item, RichTextContent, SingleLineContent} from "types/catalogue";
 import DateComponent from "components/date";
 import ContentTransformer, {ContentTransformerProps} from "components/contentTransformer";
 import ImageView from "components/imageView";
@@ -19,7 +19,7 @@ const AlbumPage = (item: Item) => {
     <div className={classNames(container, "my-6 overflow-x-hidden")}>
       {item.createdAt && <span className={"opacity-50"}><i>Opprettet <DateComponent dateString={item.createdAt}/></i></span>}
       {images && <ImageView images={images}/>}
-      <section className={""}>
+      <section>
         {author && <h3>Av {author}</h3>}
         {authorContact && <a href={`mailto:${authorContact}`}><span className={"text-sm text-gray-500"}>{authorContact}</span></a>}
       </section>
