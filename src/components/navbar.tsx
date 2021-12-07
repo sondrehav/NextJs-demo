@@ -58,7 +58,7 @@ const Navbar = ({ title, links }: { title: string, links: Item[] }) => {
         </div>
         <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
           <div className="hidden sm:block">
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 text-center items-center">
               {links.map(link => <LinkItem key={link.path} link={link}/>)}
             </div>
           </div>
