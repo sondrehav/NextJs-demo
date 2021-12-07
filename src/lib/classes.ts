@@ -1,1 +1,1 @@
-export const container = "sm:container md:mx-auto px-4";
+export const container = "sm:container mx-auto px-4";

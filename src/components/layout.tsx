@@ -26,7 +26,7 @@ const Layout = ({ children, item }: PropsWithChildren<{ item: Item }>) => {
       <Head>
         <title>NextJs demo | {title}</title>
       </Head>
-      <Header headerImage={headerImage} title={title}/>
+      <Header headerImage={headerImage}/>
       <Navbar links={links} title={title}/>
       {children}
     </>

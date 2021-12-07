@@ -48,7 +48,7 @@ fragment relation on Item {
 }
 
 fragment imageVariant on Image {
-  url altText variants { width height url }
+  url altText variants { width height url } caption { plainText }
 }
 
 #todo: Apollo Client to prevent nested queries like this..

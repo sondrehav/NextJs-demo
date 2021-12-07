@@ -15,7 +15,7 @@ const ChildPageView = forwardRef<HTMLAnchorElement, Props & Pick<HTMLProps<HTMLA
 
   return (<a ref={ref} onClick={onClick} href={href} className={"rounded-xl shadow relative flex flex-col transition-all bg-gray-800 hover:bg-gray-700 overflow-hidden"}>
     {headerImage && <div className={"max-h-32 sm:max-h-64 overflow-hidden"}>
-        <Image className={"w-full object-cover object-center max-h-inherit"} sizes={"(max-width: 600px) 40vw, 700px"} {...headerImage}/>
+        <Image className={"w-full object-cover object-center max-h-inherit"} sizes={"(min-width: 768px) 480px, 100vw"} {...headerImage}/>
       </div>
     }
     <div className={"p-4"}>
