@@ -72,5 +72,4 @@ export default function DynamicPage(props: InferGetServerSidePropsType<typeof ge
 
   return <h1>Unknown shape: {shape}</h1>;
 
-
 }

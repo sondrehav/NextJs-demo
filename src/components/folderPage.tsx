@@ -15,9 +15,7 @@ const FolderPage = (item: Item) => {
   const author = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author")?.text;
   const authorContact = findComponent<SingleLineContent>(item.components ?? [], ComponentType.SingleLine, "author-contact")?.text;
 
-
   return (<Layout item={item}>
-
 
     <div className={classNames(container, "my-6 overflow-x-hidden")}>
       {title && <h1 className={"text-3xl my-4"}>{title}</h1>}

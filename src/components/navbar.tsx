@@ -39,7 +39,7 @@ const Navbar = ({ title, links }: { title: string, links: Item[] }) => {
   return (<nav className="sticky bg-gray-900 top-0 z-30 w-full shadow-lg border-b border-gray-800">
     <div className={classNames(container, "relative px-0 z-50")}>
       <div className="relative flex items-center justify-between h-16">
-        <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+        <div className="absolute flex-grow-0 flex-shrink-0 inset-y-0 left-0 flex items-center sm:hidden">
           <button type="button"
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                   aria-controls="mobile-menu" aria-expanded="false"
@@ -56,14 +56,14 @@ const Navbar = ({ title, links }: { title: string, links: Item[] }) => {
             </svg>
           </button>
         </div>
-        <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+        <div className="w-full relative overflow-x-auto flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
           <div className="hidden sm:block">
-            <div className="flex space-x-4 text-center items-center">
+            <div className="flex space-x-4 text-center items-center whitespace-nowrap">
               {links.map(link => <LinkItem key={link.path} link={link}/>)}
             </div>
           </div>
         </div>
-        <div className={"flex flex-row items-center space-x-4"}>
+        <div className={"flex-grow-0 flex-shrink-0 flex flex-row items-center space-x-4 pl-4"}>
           <h2 className={"text-lg"}>
             {title}
           </h2>
