@@ -78,6 +78,7 @@ fragment links on Item {
           }
         }
       }
+      ... on ImageContent { firstImage { ...imageVariant } }
     }
   }
 }
