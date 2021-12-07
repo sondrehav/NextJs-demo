@@ -23,7 +23,7 @@ const ChildPageView = forwardRef<HTMLAnchorElement, Props & Pick<HTMLProps<HTMLA
         {author && <span className={"text-sm text-gray-500"}>{author}</span>}
         {createdAt && <span className={"text-sm text-gray-500"}><DateComponent dateString={createdAt}/></span>}
       </div>
-      {title && <h3 className={"text-2xl overflow-hidden truncate"}>{title}</h3>}
+      {title && <h3 title={title} className={"text-1xl overflow-hidden truncate"}>{title}</h3>}
     </div>
   </a>);
 });
