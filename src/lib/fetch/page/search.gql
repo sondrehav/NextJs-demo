@@ -2,7 +2,7 @@
 query Search {
   search(filter: {
     include: {
-      shapeIdentifiers: ["album", "albumcollection"]
+      shapeIdentifiers: ["album"]
     }
   }, language:"en") {
     edges {

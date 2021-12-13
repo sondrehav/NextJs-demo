@@ -963,7 +963,7 @@ module.exports = {
     textOpacity: ['responsive', 'dark', 'group-hover', 'focus-within', 'hover', 'focus'],
     textOverflow: ['responsive'],
     textTransform: ['responsive'],
-    transform: ['responsive'],
+    transform: ['responsive', 'group-hover'],
     transformOrigin: ['responsive'],
     transitionDelay: ['responsive'],
     transitionDuration: ['responsive'],

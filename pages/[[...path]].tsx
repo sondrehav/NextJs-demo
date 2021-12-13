@@ -7,12 +7,12 @@ import {
 } from "next";
 import {ParsedUrlQuery} from "querystring";
 import fetchPage, {fetchPageList} from "lib/fetch/page";
-import {Item} from "types/catalogue";
+import {BooleanContent, ComponentType, Item, Maybe} from "types/catalogue";
 import AlbumPage from "components/albumPage";
-import FolderPage from "components/folderPage";
+import findComponent from "lib/findComponent";
 
 interface StaticPathType extends ParsedUrlQuery { path: string[] }
-type StaticPropsType = { item: Item }
+type StaticPropsType = { item: Item, commonLinks: Maybe<Item> }
 
 export const getStaticPaths = async (context: GetStaticPathsContext): Promise<GetStaticPathsResult<StaticPathType>> => {
 
@@ -45,6 +45,8 @@ export const getStaticProps = async (context: GetStaticPropsContext<StaticPathTy
   const path = context.params?.path ? `/web/${context.params?.path.join("/")}` : "/web";
 
   const res = await fetchPage(path);
+  const commonLinks = res.commonLinks;
+
   if(!res.catalogue) {
     return {
       notFound: true,
@@ -52,8 +54,17 @@ export const getStaticProps = async (context: GetStaticPropsContext<StaticPathTy
     }
   }
 
+  const listChildren = findComponent<BooleanContent>(res.catalogue.components ?? [] , ComponentType.Boolean, "list-children")?.value;
+  if(listChildren !== true) {
+    res.catalogue.children = null;
+  }
+
+  if(path === "/web") {
+    res.catalogue.parent = null;
+  }
+
   return {
-    props: { item: res.catalogue },
+    props: { item: res.catalogue, commonLinks },
     revalidate: 60
   }
 };
@@ -62,12 +73,9 @@ export const getStaticProps = async (context: GetStaticPropsContext<StaticPathTy
 export default function DynamicPage(props: InferGetServerSidePropsType<typeof getStaticProps>) {
 
   const shape = props.item.shape.identifier;
-  if(shape === "albumcollection") {
-    return <FolderPage {...props.item}/>
-  }
 
   if(shape === "album") {
-    return <AlbumPage {...props.item}/>
+    return <AlbumPage catalogue={props.item} commonLinks={props.commonLinks}/>
   }
 
   return <h1>Unknown shape: {shape}</h1>;
