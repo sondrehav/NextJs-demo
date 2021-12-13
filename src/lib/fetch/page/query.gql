@@ -1,5 +1,5 @@
 query Catalogue($path: String!) {
-  catalogue(path: $path) {
+  catalogue(path: $path, language:"en") {
     id
     name
     path

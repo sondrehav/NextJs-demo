@@ -4,7 +4,7 @@ query Search {
     include: {
       shapeIdentifiers: ["album", "albumcollection"]
     }
-  }) {
+  }, language:"en") {
     edges {
       node {
         path
