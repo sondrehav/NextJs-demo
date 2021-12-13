@@ -29,9 +29,18 @@ const LinkContent = (props: NodeProps) => {
 };
 const QuoteContent = (props: NodeProps) => <p className={"border-l-2 px-4 my-4 border-gray-300 "}><i><NodeContent {...props} /></i></p>;
 const ParagraphContent = (props: NodeProps) => <p className={"my-4"}><NodeContent {...props} /></p>;
-const CodeContent = (props: NodeProps) => <SyntaxHighlighter showLineNumbers language={"tsx"} style={theme}>
-  {props.children?.filter(s => s.type !== "line-break").map(c => c.textContent).join("\n") ?? ""}
-</SyntaxHighlighter>;
+
+const r = /^\#\[language\=(\w+)\]$/;
+const CodeContent = (props: NodeProps) => {
+
+  const children = [...(props.children ?? [])].filter(s => s.type !== "line-break");
+  const language = children[0].textContent ? r.exec(children[0].textContent)?.[1] : undefined;
+  if(language) children.shift();
+
+  return <SyntaxHighlighter showLineNumbers language={typeof language === "string" ? language : undefined} style={theme}>
+    {children.map(c => c.textContent).join("\n") ?? ""}
+  </SyntaxHighlighter>;
+}
 const UListContent = (props: NodeProps) => <ul className={"list-disc"}>
   {(props.children ?? []).filter(c => c.type === "list-item").map((c, i) => <li key={i} className={"list-item ml-6"}>
     <NodeContent {...c}/>
