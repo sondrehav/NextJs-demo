@@ -1,16 +1,16 @@
 module.exports = {
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
   },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"]
+      use: ["@svgr/webpack"],
     });
     config.module.rules.push({
       test: /\.gql$/,
-      type: 'asset/source',
+      type: "asset/source",
     });
     return config;
-  }
+  },
 };

@@ -6,28 +6,33 @@
     "dev": "next dev -p 3962",
     "build": "next build",
     "start": "next start -p 3962",
-    "lint": "next lint",
-    "guard": "ts-auto-guard"
+    "lint": "next lint"
   },
   "dependencies": {
     "@crystallize/react-content-transformer": "^2.0.0",
     "@crystallize/react-image": "^7.3.1",
     "classnames": "^2.3.1",
-    "next": "11.0.1",
+    "next": "^12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "react-syntax-highlighter": "^15.4.5"
+    "react-syntax-highlighter": "^15.4.5",
+    "remark": "^14.0.2"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
     "@types/react": "17.0.13",
     "@types/react-syntax-highlighter": "^13.5.2",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
     "autoprefixer": "^10.3.2",
-    "eslint": "7.30.0",
+    "eslint": "^7.30.0",
+    "eslint-config-google": "^0.14.0",
     "eslint-config-next": "11.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-react": "^7.28.0",
     "postcss": "^8.3.6",
+    "prettier": "^2.5.1",
     "tailwindcss": "^2.2.7",
-    "ts-auto-guard": "^1.0.0-alpha.29",
-    "typescript": "4.3.5"
+    "typescript": "^4.5.4"
   }
 }
