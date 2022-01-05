@@ -1,10 +1,6 @@
-import { cloneElement, HTMLProps, useEffect, useState } from "react";
-import { remark } from "remark";
 import { Node, Parent } from "unist";
-import classNames from "classnames";
-import { Specific } from "unified";
-import { Root } from "remark-parse/lib";
 import {
+  Blockquote,
   Code,
   Emphasis,
   Heading,
@@ -16,11 +12,11 @@ import {
   Strong,
   Text,
 } from "mdast";
-import { createElement } from "react";
-import ImageView from "components/imageView";
-import { Image as ImageComponent } from "components/image";
-import { dracula as theme } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { createElement, Fragment } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dracula as theme } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import ImageView from "components/images/imageView";
+import { NodeContent } from "@crystallize/react-content-transformer";
 
 const elementClassNames = {
   h1: "text-3xl my-8",
@@ -89,8 +85,17 @@ const Markdown = (node: Node) => {
       </li>
     );
   }
-  if (isType<Text>(node, "text")) {
-    return <>{node.value}</>;
+  if (isType<Blockquote>(node, "blockquote")) {
+    console.log(node);
+    return (
+      <p className={"border-l-2 px-4 my-4 border-gray-300 "}>
+        <i>
+          {node.children.map((child, index) => (
+            <Markdown key={index} {...child} />
+          ))}
+        </i>
+      </p>
+    );
   }
   if (isType<Strong>(node, "strong")) {
     return (
@@ -111,22 +116,7 @@ const Markdown = (node: Node) => {
     );
   }
   if (isType<Image>(node, "image")) {
-    return (
-      <div className={"my-8 lg:mx-auto lg:my-8"}>
-        <img
-          className={
-            "overflow-hidden max-h-96 rounded-xl shadow-lg lg:mx-auto object-cover"
-          }
-          src={node.url}
-          alt={node.alt ?? node.title ?? ""}
-        />
-        {node.alt && (
-          <p className={"my-4 text-gray-500 text-center"}>
-            <i>{node.alt}</i>
-          </p>
-        )}
-      </div>
-    );
+    return <ImageView {...node} caption={node.title ?? undefined} />;
   }
   if (isType<Code>(node, "code")) {
     const language = node.lang;
@@ -143,6 +133,20 @@ const Markdown = (node: Node) => {
   if (isType<InlineCode>(node, "inlineCode")) {
     return <code className={"text-blue-300"}>{node.value}</code>;
   }
+  if (isType<Text>(node, "text")) {
+    const [first, ...lines] = node.value.split("\n");
+    return (
+      <>
+        {first}
+        {lines.map((line, index) => (
+          <Fragment key={index}>
+            <br />
+            {line}
+          </Fragment>
+        ))}
+      </>
+    );
+  }
   if ("children" in node) {
     const parent = node as Parent;
     return (
@@ -156,19 +160,4 @@ const Markdown = (node: Node) => {
   return null;
 };
 
-const MarkdownPreview = ({
-  content,
-  className,
-}: { content: string } & HTMLProps<HTMLDivElement>) => {
-  const [result, setResult] = useState<null | Root>(null);
-  useEffect(() => {
-    const res = remark().parse(content);
-    setResult(res);
-  }, [content]);
-
-  if (!result) return null;
-
-  return <Markdown {...result} />;
-};
-
-export default MarkdownPreview;
+export default Markdown;

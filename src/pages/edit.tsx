@@ -5,12 +5,14 @@ import {
 } from "next";
 import Layout from "components/layout";
 import classNames from "classnames";
-import { container } from "lib/classes";
+import { container, inputCommon } from "lib/classes";
 
-import TextArea from "components/textArea";
+import { TextArea } from "components/editor/inputs";
 import { remark } from "remark";
-import MarkdownPreview from "components/markdownPreview";
-import { useState } from "react";
+import MarkdownPreview from "components/editor/markdownPreview";
+import { ChangeEvent, ChangeEventHandler, useState } from "react";
+import { ImageProvider } from "components/images/imagePreviewProvider";
+import EditorForm from "components/editor/editorForm";
 
 type EditPagePropsType = {};
 
@@ -32,6 +34,15 @@ export const getServerSideProps = async (
 export default function EditPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
+  /* const [name, setName] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+
+  const onImageUpload: ChangeEventHandler<HTMLInputElement> = (event) => {
+    if (!event.target.files?.[0]) return;
+    const image = event.target.files[0];
+    setImages((images) => [...images, URL.createObjectURL(image)]);
+  };*/
+
   const [markdown, setMarkdown] = useState("");
 
   return (
@@ -40,18 +51,18 @@ export default function EditPage(
       <div
         className={classNames(
           container,
-          "my-8 flex flex-col lg:justify-between lg:flex-row lg:space-x-4",
+          "py-8 flex flex-col lg:justify-between lg:flex-row lg:space-x-4",
           "h-auto lg:h-full flex-grow-1"
         )}
       >
-        <div className={"w-full flex flex-col"}>
-          <h3 className={"text-xl my-4"}>Edit source</h3>
-          <TextArea
-            className={"flex-grow-1 flex-shrink-1 h-64 lg:h-auto"}
-            value={markdown}
-            onChange={(e) => setMarkdown(e.target.value)}
-          />
-        </div>
+        <EditorForm
+          initial={{ markdown, title: "", identifier: "", images: [] }}
+          onWatch={(value, { name, type }) => {
+            if (name === "markdown" && type === "change" && value.markdown) {
+              setMarkdown(value.markdown);
+            }
+          }}
+        />
         <div className={"w-full flex flex-col"}>
           <h3 className={"text-xl my-4"}>Preview</h3>
           <div
@@ -59,7 +70,9 @@ export default function EditPage(
               "flex-grow-1 flex-shrink-1 h-64 lg:h-auto relative overflow-auto"
             }
           >
-            <MarkdownPreview content={markdown} />
+            <ImageProvider>
+              <MarkdownPreview content={markdown} />
+            </ImageProvider>
           </div>
         </div>
       </div>

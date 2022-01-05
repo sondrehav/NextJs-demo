@@ -16,6 +16,7 @@ import ChevronLeft from "icons/chevron-left.svg";
 import Link from "next/link";
 import classNames from "classnames";
 import { container } from "lib/classes";
+import { Image as ImageProps } from "types/image";
 
 const Layout = ({
   children,
@@ -73,7 +74,7 @@ export const PageLayout = ({
     : null;
   return (
     <>
-      <Header headerImage={headerImage} />
+      <Header headerImage={headerImage as ImageProps} />
       <Layout links={links} title={title} />
       {parent && (
         <Link href={parent.parentPath?.replace("/web", "") ?? ""}>

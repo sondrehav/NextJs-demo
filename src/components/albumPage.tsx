@@ -11,7 +11,7 @@ import classNames from "classnames";
 import { container } from "lib/classes";
 import Link from "next/link";
 import ChildPageView from "components/childPageView";
-import Paragraph from "components/paragraph";
+import Paragraph from "components/old/paragraph";
 import ArticleHeader from "components/articleHeader";
 import { LinkItemProps } from "components/navbar";
 

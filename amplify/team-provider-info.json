@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-toobular-dev-134858-authRole",
+      "UnauthRoleArn": "arn:aws:iam::752420170695:role/amplify-toobular-dev-134858-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::752420170695:role/amplify-toobular-dev-134858-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-toobular-dev-134858-deployment",
+      "UnauthRoleName": "amplify-toobular-dev-134858-unauthRole",
+      "StackName": "amplify-toobular-dev-134858",
+      "StackId": "arn:aws:cloudformation:eu-north-1:752420170695:stack/amplify-toobular-dev-134858/b0c08ab0-6d5c-11ec-a26f-0e0f3033108e",
+      "AmplifyAppId": "d3uxspbln9w5xw"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { ComponentProps, FC } from "react";
-import { Image as CImage, ImageVariant } from "types/catalogue";
+import { ImageVariant, Image as ImageProps } from "types/image";
+import { withImageContext } from "components/images/imagePreviewProvider";
 
-export type Props = Pick<CImage, "url" | "altText" | "variants"> &
-  ComponentProps<"img"> & { sizes: string };
+export type Props = ComponentProps<"img"> & ImageProps;
 
 export const Image: FC<Props> = ({
   url,
