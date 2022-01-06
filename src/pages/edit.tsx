@@ -44,6 +44,7 @@ export default function EditPage(
   });
 
   const onSubmit = (data: ArticleProps) => {
+    alert(JSON.stringify(data));
     console.log(data);
   };
 
@@ -67,7 +68,7 @@ export default function EditPage(
                 "p-3 bg-gray-800 shadow-lg rounded w-full"
               }
             >
-              <div className={"absolute"}>
+              <div className={"relative lg:absolute"}>
                 <MarkdownPreview />
               </div>
             </div>

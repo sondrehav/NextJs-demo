@@ -8,6 +8,11 @@ import {
 import SmallPreview from "components/editor/smallPreview";
 import { Button, Input } from "components/editor/inputs";
 import { FileMeta } from "components/editor/imageUploadEdit";
+import TransformController from "components/editor/transformController";
+import {
+  identifierPattern,
+  sanitizeIdentifier,
+} from "components/editor/common";
 
 const InnerModal = forwardRef<
   HTMLFormElement,
@@ -40,8 +45,12 @@ const InnerModal = forwardRef<
             className={"w-full h-64 my-4 object-cover shadow rounded-md"}
           />
         )}
-        <Controller
+        <TransformController
           name={"identifier"}
+          transform={{
+            output: sanitizeIdentifier,
+            input: (value) => value,
+          }}
           render={({ field }) => (
             <Input
               {...field}
@@ -52,13 +61,7 @@ const InnerModal = forwardRef<
           )}
           rules={{
             required: "The image needs an unique identifier",
-            pattern: {
-              value: /^[\da-z][\da-z-]{2,64}[\da-z]$/,
-              message:
-                "The identifier must be all lower-case, only include letters, numbers and '-'. " +
-                "It must start with a letter and end in a letter or number. " +
-                "It must be between 4 and 16 characters.",
-            },
+            pattern: identifierPattern,
           }}
         />
 

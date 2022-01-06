@@ -2,8 +2,12 @@ import { Button, Input, TextArea } from "components/editor/inputs";
 import { Controller, useFormContext } from "react-hook-form";
 import { ArticleProps } from "types/image";
 import ImageUploadEdit from "components/editor/imageUploadEdit";
-import { UseFormHandleSubmit } from "react-hook-form/dist/types/form";
 import { ComponentProps } from "react";
+import TransformController from "components/editor/transformController";
+import {
+  identifierPattern,
+  sanitizeIdentifier,
+} from "components/editor/common";
 
 const EditorForm = ({
   initial,
@@ -12,13 +16,18 @@ const EditorForm = ({
   const {
     reset,
     formState: { errors },
+    watch,
   } = useFormContext<ArticleProps>();
 
   return (
     <>
       <form className={"w-full flex flex-col"} onSubmit={onSubmit}>
-        <Controller
+        <TransformController
           name={"identifier"}
+          transform={{
+            output: sanitizeIdentifier,
+            input: (value) => value,
+          }}
           render={({ field }) => (
             <Input
               {...field}
@@ -30,13 +39,7 @@ const EditorForm = ({
           )}
           rules={{
             required: "The article must have a unique identifier",
-            pattern: {
-              value: /^[\da-z][\da-z\d-]{2,14}[\da-z\d]$/,
-              message:
-                "The identifier must be all lower-case, only include letters, numbers and '-'. " +
-                "It must start with a letter and end in a letter or number. " +
-                "It must be between 4 and 16 characters.",
-            },
+            pattern: identifierPattern,
           }}
         />
 

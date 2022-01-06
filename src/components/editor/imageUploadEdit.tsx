@@ -1,31 +1,13 @@
-import {
-  ComponentProps,
-  FormEventHandler,
-  forwardRef,
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import classNames from "classnames";
 import ImageIcon from "icons/image.svg";
-import { ArticleProps, Image, Image as ImageProps } from "types/image";
+import { ArticleProps } from "types/image";
 import dynamic from "next/dynamic";
-import { Button, Input } from "components/editor/inputs";
-import {
-  Controller,
-  FormProvider,
-  useFieldArray,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
-import { withImageContextEditorContext } from "components/images/imagePreviewProvider";
-import { identifier } from "@babel/types";
-import ImageView from "components/images/imageView";
-import { Image as ImageComponent } from "components/images/image";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import SmallPreview from "components/editor/smallPreview";
 import ImageModal from "components/editor/imageModal";
+import { sanitizeIdentifier } from "components/editor/common";
 
 const Modal = dynamic(() => import("components/modal"), { ssr: false });
 
@@ -59,7 +41,10 @@ const ImageUploadEdit = () => {
   const onDropAccepted = (acceptedFiles: File[]) => {
     const existingIds = new Set(fields.map((v) => v.identifier));
     const images: ArticleProps["images"] = acceptedFiles.map((file) => {
-      const identifier = createIdentifier(file.name.split(".")[0], existingIds);
+      const identifier = createIdentifier(
+        sanitizeIdentifier(file.name.split(".")[0]),
+        existingIds
+      );
       return {
         data: file,
         identifier,
