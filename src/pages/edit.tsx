@@ -34,7 +34,12 @@ export default function EditPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const formProps = useForm<ArticleProps>({
-    defaultValues: { identifier: "", images: [], title: "", markdown: "" },
+    defaultValues: {
+      identifier: "",
+      images: [],
+      title: "",
+      markdown: "",
+    },
     reValidateMode: "onSubmit",
   });
 
@@ -44,36 +49,31 @@ export default function EditPage(
 
   return (
     <FormProvider {...formProps}>
-      <ImageContextEditorProvider>
-        <form
-          className={"flex flex-col h-screen"}
-          onSubmit={formProps.handleSubmit(onSubmit)}
+      <div className={"flex flex-col h-screen"}>
+        <Layout links={[]} title={"Edit"} />
+        <div
+          className={classNames(
+            container,
+            "py-8 flex flex-col lg:justify-between lg:flex-row lg:space-x-4",
+            "h-auto lg:h-full flex-grow-1"
+          )}
         >
-          <Layout links={[]} title={"Edit"} />
-          <div
-            className={classNames(
-              container,
-              "py-8 flex flex-col lg:justify-between lg:flex-row lg:space-x-4",
-              "h-auto lg:h-full flex-grow-1"
-            )}
-          >
-            <EditorForm />
-            <div className={"w-full flex flex-col"}>
-              <h3 className={"text-xl my-4"}>Preview</h3>
-              <div
-                className={
-                  "relative h-64 lg:h-full overflow-auto " +
-                  "p-3 bg-gray-800 shadow-lg rounded"
-                }
-              >
-                <div className={"absolute"}>
-                  <MarkdownPreview />
-                </div>
+          <EditorForm onSubmit={formProps.handleSubmit(onSubmit)} />
+          <div className={"w-full flex flex-col"}>
+            <h3 className={"text-xl my-4"}>Preview</h3>
+            <div
+              className={
+                "relative -lg:max-h-screen lg:h-full overflow-auto " +
+                "p-3 bg-gray-800 shadow-lg rounded w-full"
+              }
+            >
+              <div className={"absolute"}>
+                <MarkdownPreview />
               </div>
             </div>
           </div>
-        </form>
-      </ImageContextEditorProvider>
+        </div>
+      </div>
     </FormProvider>
   );
 }

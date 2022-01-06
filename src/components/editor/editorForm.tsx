@@ -2,8 +2,13 @@ import { Button, Input, TextArea } from "components/editor/inputs";
 import { Controller, useFormContext } from "react-hook-form";
 import { ArticleProps } from "types/image";
 import ImageUploadEdit from "components/editor/imageUploadEdit";
+import { UseFormHandleSubmit } from "react-hook-form/dist/types/form";
+import { ComponentProps } from "react";
 
-const EditorForm = ({ initial }: { initial?: ArticleProps }) => {
+const EditorForm = ({
+  initial,
+  onSubmit,
+}: { initial?: ArticleProps } & Pick<ComponentProps<"form">, "onSubmit">) => {
   const {
     reset,
     formState: { errors },
@@ -11,7 +16,7 @@ const EditorForm = ({ initial }: { initial?: ArticleProps }) => {
 
   return (
     <>
-      <div className={"w-full flex flex-col"}>
+      <form className={"w-full flex flex-col"} onSubmit={onSubmit}>
         <Controller
           name={"identifier"}
           render={({ field }) => (
@@ -71,6 +76,7 @@ const EditorForm = ({ initial }: { initial?: ArticleProps }) => {
           )}
           rules={{ required: "The article needs some content for publishing." }}
         />
+
         <ImageUploadEdit />
 
         <div className={"flex flex-row justify-between items-center my-4"}>
@@ -86,7 +92,7 @@ const EditorForm = ({ initial }: { initial?: ArticleProps }) => {
             }}
           />
         </div>
-      </div>
+      </form>
     </>
   );
 };

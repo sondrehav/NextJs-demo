@@ -87,7 +87,6 @@ const Markdown = (node: Node) => {
     );
   }
   if (isType<Blockquote>(node, "blockquote")) {
-    console.log(node);
     return (
       <p className={"border-l-2 px-4 my-4 border-gray-300 "}>
         <i>

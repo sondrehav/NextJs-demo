@@ -4,7 +4,6 @@ import { withImageContext } from "components/images/imagePreviewProvider";
 
 const SingleImage = withImageContext<ImageProps>(({ cdn, ...image }) => {
   const imageProps = cdn?.[image.url] ?? image;
-  console.log(imageProps, cdn);
   return (
     <ImageComponent
       className={

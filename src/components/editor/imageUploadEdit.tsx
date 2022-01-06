@@ -1,92 +1,35 @@
-import { forwardRef, Fragment, useCallback, useEffect, useState } from "react";
+import {
+  ComponentProps,
+  FormEventHandler,
+  forwardRef,
+  Fragment,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import classNames from "classnames";
 import ImageIcon from "icons/image.svg";
-import { Image as ImageProps } from "types/image";
+import { ArticleProps, Image, Image as ImageProps } from "types/image";
 import dynamic from "next/dynamic";
 import { Button, Input } from "components/editor/inputs";
-import { Controller, useForm } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { withImageContextEditorContext } from "components/images/imagePreviewProvider";
+import { identifier } from "@babel/types";
+import ImageView from "components/images/imageView";
+import { Image as ImageComponent } from "components/images/image";
+import SmallPreview from "components/editor/smallPreview";
+import ImageModal from "components/editor/imageModal";
 
 const Modal = dynamic(() => import("components/modal"), { ssr: false });
-type FileMeta = { file: File; identifier: string; objectUrl: string };
-type FormData = Pick<FileMeta, "identifier">;
 
-const ImageModal = forwardRef<
-  HTMLFormElement,
-  {
-    onSave: (meta: FormData) => any;
-    onDelete: () => any;
-    fileMeta: Partial<Pick<FileMeta, "identifier" | "objectUrl">>;
-    existingIds: string[];
-  }
->(({ fileMeta, onDelete, onSave, existingIds }, ref) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    defaultValues: { identifier: fileMeta.identifier },
-  });
-
-  const onSubmit = (data: FormData) => {
-    onSave(data);
-  };
-
-  return (
-    <div className={"flex flex-row justify-center items-center h-full"}>
-      <form
-        className={"w-96 bg-gray-800 p-8 shadow flex flex-col rounded-lg"}
-        ref={ref}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <h3 className={"text-2xl my-2 block"}>Edit image meta</h3>
-
-        {fileMeta.objectUrl && (
-          <img
-            src={fileMeta.objectUrl}
-            className={"w-full h-64 my-4 object-cover shadow rounded-md"}
-          />
-        )}
-        <Controller
-          name={"identifier"}
-          render={({ field }) => (
-            <Input
-              {...field}
-              label={"Identifier"}
-              errorMessage={errors.identifier?.message}
-              showError={!!errors.identifier}
-            />
-          )}
-          control={control}
-          rules={{
-            required: "The image needs an unique identifier",
-            pattern: /^[\da-z][\da-z-]{2,64}[\da-z]$/,
-            validate: (value) =>
-              existingIds.indexOf(value) < 0 || fileMeta.identifier === value
-                ? true
-                : "An image with this identifier already exists",
-          }}
-          defaultValue={""}
-        />
-
-        <div className={"flex flex-row justify-between items-center my-4"}>
-          <Button label={"Save"} type={"submit"} />
-          <Button
-            label={"Delete"}
-            variant={"secondary"}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onDelete();
-            }}
-          />
-        </div>
-      </form>
-    </div>
-  );
-});
-ImageModal.displayName = "ImageModal";
+export type FileMeta = ArticleProps["images"][0];
 
 const createIdentifier = (
   identifier: string,
@@ -99,33 +42,30 @@ const createIdentifier = (
   return identifier;
 };
 
-const ImageUploadEdit = withImageContextEditorContext(({ setPreviews }) => {
-  const [files, setFiles] = useState<FileMeta[]>([]);
+const ImageUploadEdit = () => {
   const [showModal, setShowModal] = useState(false);
-  const [editFileMeta, setEditFileMeta] = useState<FileMeta | null>(null);
+  const [editFileMeta, setEditFileMeta] = useState<[number, FileMeta] | null>(
+    null
+  );
+
+  const { register, getValues } = useFormContext();
+  const { fields, append, remove, update } = useFieldArray<
+    ArticleProps,
+    "images"
+  >({
+    name: "images",
+  });
 
   const onDropAccepted = (acceptedFiles: File[]) => {
-    const existingIds = new Set(files.map((v) => v.identifier));
-    const newFiles = acceptedFiles.map<FileMeta>((file) => {
+    const existingIds = new Set(fields.map((v) => v.identifier));
+    const images: ArticleProps["images"] = acceptedFiles.map((file) => {
       const identifier = createIdentifier(file.name.split(".")[0], existingIds);
-      const objectUrl = URL.createObjectURL(file);
       return {
-        file,
+        data: file,
         identifier,
-        objectUrl,
       };
     });
-    const previews = newFiles.reduce(
-      (a, v) => ({ ...a, [v.identifier]: { url: v.objectUrl } }),
-      {}
-    );
-    setPreviews((old) => {
-      return {
-        ...old,
-        ...previews,
-      };
-    });
-    setFiles((old) => old.concat(newFiles));
+    append(images);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -134,36 +74,28 @@ const ImageUploadEdit = withImageContextEditorContext(({ setPreviews }) => {
     multiple: true,
   });
 
-  useEffect(() => {
-    return () => {
-      files.forEach(({ objectUrl }) => URL.revokeObjectURL(objectUrl));
-    };
-  }, []);
-
-  const onSaveImage = (e: FormData) => {
+  const onSaveImage = (e: FileMeta) => {
     if (!editFileMeta)
       throw new Error(
         "'editFileMeta' was undefined. This should not be possible.."
       );
-    setFiles((files) => [
-      ...files.map((file) => {
-        if (file.identifier === editFileMeta.identifier) {
-          return { ...file, identifier: e.identifier };
-        }
-        return file;
-      }),
-    ]);
-    setPreviews(({ [editFileMeta.identifier]: _, ...old }) => ({
-      ...old,
-      [e.identifier]: { url: editFileMeta.objectUrl },
-    }));
+
+    const [index, m] = editFileMeta;
+
+    if (
+      e.identifier !== m.identifier &&
+      fields.map((field) => field.identifier).indexOf(e.identifier) >= 0
+    ) {
+      throw new Error(`Field with id '${e.identifier}' already exists.`);
+    }
+    const newFileMeta: FileMeta = { ...m, identifier: e.identifier };
+    update(index, newFileMeta);
+    setEditFileMeta([index, newFileMeta]);
     setShowModal(false);
   };
 
-  const onDeleteImage = (e: FileMeta) => {
-    setFiles((files) => files.filter((s) => s.identifier !== e.identifier));
-    setPreviews(({ [e.identifier]: _, ...old }) => old);
-    URL.revokeObjectURL(e.objectUrl);
+  const onDeleteImage = ([index, meta]: [number, FileMeta]) => {
+    remove(index);
     setShowModal(false);
   };
 
@@ -171,27 +103,32 @@ const ImageUploadEdit = withImageContextEditorContext(({ setPreviews }) => {
     <>
       <label className={"text-xl my-2"}>Images</label>
       <div className={"flex flex-row flex-wrap -mx-2 items-center"}>
-        {files.map((file) => (
+        {fields.map((field, index) => (
           <div
-            key={file.objectUrl}
+            key={field.identifier}
             className={
               "relative w-48 h-32 m-2 shadow rounded-md transition-all ring-blue-500 ring-0 hover:ring-2 cursor-pointer overflow-hidden"
             }
             onClick={() => {
-              setEditFileMeta(file);
+              setEditFileMeta([index, field]);
               setShowModal(true);
             }}
           >
-            <img
-              src={file.objectUrl}
+            <input
+              className={"hidden"}
+              key={field.identifier} // important to include key with field's id
+              {...register(`images.${index}.identifier`)}
+            />
+            <SmallPreview
               className={"w-full h-full object-cover"}
+              image={field.data}
             />
             <h4
               className={
                 "absolute bottom-0 block bg-gray-100 bg-opacity-50 text-black w-full p-2 truncate text-center font-bold"
               }
             >
-              {file.identifier}
+              {field.identifier}
             </h4>
           </div>
         ))}
@@ -214,18 +151,14 @@ const ImageUploadEdit = withImageContextEditorContext(({ setPreviews }) => {
       </div>
       <Modal visible={showModal} onBgClick={() => setShowModal(false)}>
         <ImageModal
-          key={editFileMeta?.objectUrl}
-          fileMeta={{
-            identifier: editFileMeta?.identifier,
-            objectUrl: editFileMeta?.objectUrl,
-          }}
+          key={editFileMeta?.[1].identifier}
+          fileMeta={editFileMeta?.[1] ?? null}
           onSave={onSaveImage}
           onDelete={() => editFileMeta && onDeleteImage(editFileMeta)}
-          existingIds={files.map((file) => file.identifier)}
         />
       </Modal>
     </>
   );
-});
+};
 
 export default ImageUploadEdit;
