@@ -46,6 +46,7 @@ const Markdown = (node: Node) => {
       </>
     );
   }
+  // todo: Fix images as child. Causes 'validateDOMNesting(...): <p> cannot appear as a descendant of <p>.'
   if (isType<Paragraph>(node, "paragraph")) {
     return (
       <p className={"text-base my-3"}>

@@ -6,20 +6,21 @@ import { Image as ImageProps } from "types/image";
 import dynamic from "next/dynamic";
 import { Button, Input } from "components/editor/inputs";
 import { Controller, useForm } from "react-hook-form";
+import { withImageContextEditorContext } from "components/images/imagePreviewProvider";
 
 const Modal = dynamic(() => import("components/modal"), { ssr: false });
 type FileMeta = { file: File; identifier: string; objectUrl: string };
+type FormData = Pick<FileMeta, "identifier">;
 
 const ImageModal = forwardRef<
   HTMLFormElement,
   {
-    onSave: (meta: Partial<FileMeta>) => any;
+    onSave: (meta: FormData) => any;
     onDelete: () => any;
     fileMeta: Partial<Pick<FileMeta, "identifier" | "objectUrl">>;
+    existingIds: string[];
   }
->(({ fileMeta, onDelete, onSave }, ref) => {
-  type FormData = Pick<FileMeta, "identifier">;
-
+>(({ fileMeta, onDelete, onSave, existingIds }, ref) => {
   const {
     control,
     handleSubmit,
@@ -47,7 +48,6 @@ const ImageModal = forwardRef<
             className={"w-full h-64 my-4 object-cover shadow rounded-md"}
           />
         )}
-
         <Controller
           name={"identifier"}
           render={({ field }) => (
@@ -60,8 +60,12 @@ const ImageModal = forwardRef<
           )}
           control={control}
           rules={{
-            required: true,
+            required: "The image needs an unique identifier",
             pattern: /^[\da-z][\da-z-]{2,64}[\da-z]$/,
+            validate: (value) =>
+              existingIds.indexOf(value) < 0 || fileMeta.identifier === value
+                ? true
+                : "An image with this identifier already exists",
           }}
           defaultValue={""}
         />
@@ -71,7 +75,11 @@ const ImageModal = forwardRef<
           <Button
             label={"Delete"}
             variant={"secondary"}
-            onClick={() => onDelete()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete();
+            }}
           />
         </div>
       </form>
@@ -80,23 +88,45 @@ const ImageModal = forwardRef<
 });
 ImageModal.displayName = "ImageModal";
 
-const ImageUploadEdit = () => {
+const createIdentifier = (
+  identifier: string,
+  existing: Set<string>
+): string => {
+  if (existing.has(identifier)) {
+    const id = identifier + "-" + Math.random().toString(36).substring(2, 10);
+    return createIdentifier(id, existing);
+  }
+  return identifier;
+};
+
+const ImageUploadEdit = withImageContextEditorContext(({ setPreviews }) => {
   const [files, setFiles] = useState<FileMeta[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editFileMeta, setEditFileMeta] = useState<FileMeta | null>(null);
 
-  const onDropAccepted = useCallback((acceptedFiles: File[]) => {
-    setFiles((old) => {
-      return [
-        ...old,
-        ...acceptedFiles.map<FileMeta>((file) => ({
-          file,
-          identifier: file.name.split(".")[0],
-          objectUrl: URL.createObjectURL(file),
-        })),
-      ];
+  const onDropAccepted = (acceptedFiles: File[]) => {
+    const existingIds = new Set(files.map((v) => v.identifier));
+    const newFiles = acceptedFiles.map<FileMeta>((file) => {
+      const identifier = createIdentifier(file.name.split(".")[0], existingIds);
+      const objectUrl = URL.createObjectURL(file);
+      return {
+        file,
+        identifier,
+        objectUrl,
+      };
     });
-  }, []);
+    const previews = newFiles.reduce(
+      (a, v) => ({ ...a, [v.identifier]: { url: v.objectUrl } }),
+      {}
+    );
+    setPreviews((old) => {
+      return {
+        ...old,
+        ...previews,
+      };
+    });
+    setFiles((old) => old.concat(newFiles));
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDropAccepted,
@@ -109,6 +139,33 @@ const ImageUploadEdit = () => {
       files.forEach(({ objectUrl }) => URL.revokeObjectURL(objectUrl));
     };
   }, []);
+
+  const onSaveImage = (e: FormData) => {
+    if (!editFileMeta)
+      throw new Error(
+        "'editFileMeta' was undefined. This should not be possible.."
+      );
+    setFiles((files) => [
+      ...files.map((file) => {
+        if (file.identifier === editFileMeta.identifier) {
+          return { ...file, identifier: e.identifier };
+        }
+        return file;
+      }),
+    ]);
+    setPreviews(({ [editFileMeta.identifier]: _, ...old }) => ({
+      ...old,
+      [e.identifier]: { url: editFileMeta.objectUrl },
+    }));
+    setShowModal(false);
+  };
+
+  const onDeleteImage = (e: FileMeta) => {
+    setFiles((files) => files.filter((s) => s.identifier !== e.identifier));
+    setPreviews(({ [e.identifier]: _, ...old }) => old);
+    URL.revokeObjectURL(e.objectUrl);
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -131,7 +188,7 @@ const ImageUploadEdit = () => {
             />
             <h4
               className={
-                "absolute bottom-0 block bg-gray-100 bg-opacity-50 text-black w-full p-2 truncate text-center"
+                "absolute bottom-0 block bg-gray-100 bg-opacity-50 text-black w-full p-2 truncate text-center font-bold"
               }
             >
               {file.identifier}
@@ -162,16 +219,13 @@ const ImageUploadEdit = () => {
             identifier: editFileMeta?.identifier,
             objectUrl: editFileMeta?.objectUrl,
           }}
-          onSave={(file) => {
-            setShowModal(false);
-          }}
-          onDelete={() => {
-            setShowModal(false);
-          }}
+          onSave={onSaveImage}
+          onDelete={() => editFileMeta && onDeleteImage(editFileMeta)}
+          existingIds={files.map((file) => file.identifier)}
         />
       </Modal>
     </>
   );
-};
+});
 
 export default ImageUploadEdit;

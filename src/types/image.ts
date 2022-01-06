@@ -9,3 +9,10 @@ export type Image = {
   altText?: string;
   variants?: ImageVariant[];
 };
+
+export type ArticleProps = {
+  images: Image[];
+  markdown: string;
+  identifier: string;
+  title: string;
+};

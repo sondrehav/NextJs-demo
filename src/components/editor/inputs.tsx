@@ -10,8 +10,12 @@ import Dropzone from "react-dropzone";
 
 export const TextArea = forwardRef<
   HTMLTextAreaElement,
-  ComponentProps<"textarea"> & { label: string }
->(({ label, ...props }, ref) => {
+  ComponentProps<"textarea"> & {
+    label: string;
+    errorMessage?: string;
+    showError?: boolean;
+  }
+>(({ label, errorMessage, showError, ...props }, ref) => {
   return (
     <>
       <label className={"text-xl my-4"} htmlFor={props.id}>
@@ -21,6 +25,9 @@ export const TextArea = forwardRef<
         {...props}
         className={classNames("font-mono", inputCommon, props.className)}
       />
+      {showError && (
+        <span className={"font-bold text-sm text-red-500"}>{errorMessage}</span>
+      )}
     </>
   );
 });
