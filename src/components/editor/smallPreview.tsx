@@ -1,6 +1,6 @@
 import { ComponentProps, useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { Image as ImageProps, isImageUploaded } from "types/image";
+import { ImageProps as ImageProps, isImageUploaded } from "types/imageProps";
 import { Image as ImageComponent } from "components/images/image";
 import { FileMeta } from "components/editor/imageUploadEdit";
 

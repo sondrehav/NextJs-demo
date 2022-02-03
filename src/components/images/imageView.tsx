@@ -1,6 +1,8 @@
 import { Image as ImageComponent } from "components/images/image";
-import { Image as ImageProps } from "types/image";
+import { ImageProps as ImageProps } from "types/imageProps";
 import { withImageContext } from "components/images/imagePreviewProvider";
+import { HTMLProps } from "react";
+import classNames from "classnames";
 
 const SingleImage = withImageContext<ImageProps>(({ cdn, ...image }) => {
   const imageProps = cdn?.[image.url] ?? image;
@@ -17,13 +19,14 @@ const SingleImage = withImageContext<ImageProps>(({ cdn, ...image }) => {
 
 type Props = ImageProps & { caption?: string };
 
-const ImageView = (image: Props) => {
+export const ImageView = ({ url, altText, variants, caption }: Props) => {
+  const image = { url, altText, variants };
   return (
-    <div className={"my-4 lg:mx-auto lg:my-8"}>
+    <div className={classNames("my-4 lg:mx-auto lg:my-8")}>
       <SingleImage {...image} />
-      {image.caption && (
+      {caption && (
         <p className={"my-4 text-gray-500 lg:text-center"}>
-          <i>{image.caption}</i>
+          <i>{caption}</i>
         </p>
       )}
     </div>

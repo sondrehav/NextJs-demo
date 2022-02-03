@@ -1,6 +1,5 @@
 import { ComponentProps, FC } from "react";
-import { ImageVariant, Image as ImageProps } from "types/image";
-import { withImageContext } from "components/images/imagePreviewProvider";
+import { ImageProps as ImageProps, ImageVariant } from "types/imageProps";
 
 export type Props = ComponentProps<"img"> & ImageProps;
 

@@ -1,83 +1,49 @@
 import { PropsWithChildren } from "react";
-import {
-  ComponentType,
-  Image,
-  ImageContent,
-  Item,
-  ItemRelationsContent,
-  Maybe,
-  SingleLineContent,
-} from "types/catalogue";
-import Navbar, { LinkItemProps } from "components/navbar";
+
+import Navbar from "components/navbar";
 import Header from "components/header";
-import findComponent from "lib/findComponent";
 import Head from "next/head";
 import ChevronLeft from "icons/chevron-left.svg";
 import Link from "next/link";
 import classNames from "classnames";
 import { container } from "lib/classes";
-import { Image as ImageProps } from "types/image";
+import { ImageProps as ImageProps } from "types/imageProps";
+import LinkItemProps from "types/linkItemProps";
 
 const Layout = ({
   children,
   links,
   title,
-}: PropsWithChildren<{ links: LinkItemProps[]; title: string }>) => {
+}: PropsWithChildren<{ links?: LinkItemProps[]; title?: string }>) => {
   return (
     <>
       <Head>
-        <title>Bloggete blog | {title}</title>
+        <title>{title}</title>
       </Head>
-      <Navbar links={links} title={title} />
+      <Navbar title={title} links={links} />
       {children}
     </>
   );
 };
 
 export const PageLayout = ({
-  item,
+  headerImage,
   links,
+  title,
+  parentPath,
   children,
 }: PropsWithChildren<{
+  headerImage?: ImageProps;
   links: LinkItemProps[];
-  item: Item;
-  header?: Image;
+  title: string;
+  parentPath?: LinkItemProps;
 }>) => {
-  const { components } = item;
-
-  const title =
-    findComponent<SingleLineContent>(
-      components ?? [],
-      ComponentType.SingleLine,
-      "title"
-    )?.text ??
-    item.name ??
-    "";
-
-  const headerImage =
-    findComponent<ImageContent>(
-      components ?? [],
-      ComponentType.Images,
-      "header-image"
-    )?.firstImage ?? undefined;
-
-  const parent = item.parent
-    ? {
-        parentPath: item.parent.path,
-        title:
-          findComponent<SingleLineContent>(
-            item.parent?.components ?? [],
-            ComponentType.SingleLine,
-            "title"
-          )?.text ?? item.parent?.name,
-      }
-    : null;
   return (
     <>
-      <Header headerImage={headerImage as ImageProps} />
+      <Header headerImage={headerImage} />
       <Layout links={links} title={title} />
-      {parent && (
-        <Link href={parent.parentPath?.replace("/web", "") ?? ""}>
+      {parentPath && (
+        <Link href={parentPath.path}>
           <a
             className={classNames(
               container,
@@ -91,7 +57,7 @@ export const PageLayout = ({
               width={16}
               height={16}
             />
-            <span>{parent?.title ?? "Tilbake"}</span>
+            <span>{parentPath.label}</span>
           </a>
         </Link>
       )}

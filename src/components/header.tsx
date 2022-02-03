@@ -1,4 +1,4 @@
-import { Image as ImageProps } from "types/image";
+import { ImageProps as ImageProps } from "types/imageProps";
 import { Image } from "components/images/image";
 
 const Header = ({ headerImage }: { headerImage?: ImageProps }) => {

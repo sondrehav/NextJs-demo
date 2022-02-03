@@ -23,6 +23,7 @@
     "incremental": true,
     "paths": {
       "components/*": ["./src/components/*"],
+      "@/*": ["./src/*"],
       "lib/*": ["./src/lib/*"],
       "types/*": ["./src/types/*"],
       "style/*": ["./style/*"],

@@ -16,16 +16,6 @@ import { createElement, Fragment } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula as theme } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import ImageView from "components/images/imageView";
-import { NodeContent } from "@crystallize/react-content-transformer";
-
-const elementClassNames = {
-  h1: "text-3xl my-8",
-  h2: "text-2xl my-6",
-  h3: "text-1xl my-4",
-  h4: "text-lg my-3",
-  h5: "text-sm my-2 font-bold",
-  h6: "text-sm my-2 font-bold",
-};
 
 const isType = <T extends Node>(node: Node, type: T["type"]): node is T =>
   node.type === type;
@@ -36,7 +26,7 @@ const Markdown = (node: Node) => {
       <>
         {createElement(
           `h${node.depth}`,
-          { className: elementClassNames[`h${node.depth}`] },
+          { className: `h${node.depth}` },
           <>
             {node.children.map((child, index) => (
               <Markdown key={index} {...child} />
@@ -49,7 +39,7 @@ const Markdown = (node: Node) => {
   // todo: Fix images as child. Causes 'validateDOMNesting(...): <p> cannot appear as a descendant of <p>.'
   if (isType<Paragraph>(node, "paragraph")) {
     return (
-      <p className={"text-base my-3"}>
+      <p className={"p"}>
         {node.children.map((child, index) => (
           <Markdown key={index} {...child} />
         ))}

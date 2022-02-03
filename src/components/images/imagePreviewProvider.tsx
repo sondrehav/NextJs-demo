@@ -6,7 +6,7 @@ import {
   useState,
   useEffect,
 } from "react";
-import { Image as ImageProps } from "types/image";
+import { ImageProps as ImageProps } from "types/imageProps";
 
 type CDNOrLocal = Record<string, ImageProps>;
 
