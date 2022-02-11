@@ -16,6 +16,7 @@ import MarkdownRender from "components/article/markdownRender";
 import { remark } from "remark";
 import Markdown from "components/article/markdownRender";
 import classNames from "classnames";
+import serviceClient from "lib/supabase/serviceClient";
 
 interface StaticPathType extends ParsedUrlQuery {
   blogIdentifier: string;
@@ -44,10 +45,13 @@ export const getStaticProps = async (
 
   const { articleIdentifier, blogIdentifier } = params;
 
-  const article = await getArticleFromIdentifier({
-    articleIdentifier,
-    blogIdentifier,
-  });
+  const article = await getArticleFromIdentifier(
+    {
+      articleIdentifier,
+      blogIdentifier,
+    },
+    serviceClient()
+  );
 
   if (!article) {
     return {

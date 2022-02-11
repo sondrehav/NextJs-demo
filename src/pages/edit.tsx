@@ -13,27 +13,25 @@ import { ArticleProps } from "types/imageProps";
 import { RequireAuthentication } from "components/authentication";
 
 import dynamic from "next/dynamic";
+import anonClient from "lib/supabase/anonClient";
 
 const NavProfile = dynamic(import("components/navProfile"), { ssr: false });
 
 type EditPagePropsType = { path: string | null };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<EditPagePropsType>> => {
-  /* const { Auth: SSRAuth }: { Auth: typeof Auth } = withSSRContext(context);
-  const userInfo = await SSRAuth.currentUserInfo();
-  if (!userInfo) {
-  } */
+export const getServerSideProps = async ({
+  req,
+  res,
+}: GetServerSidePropsContext): Promise<
+  GetServerSidePropsResult<EditPagePropsType>
+> => {
+  const { user } = await anonClient().auth.api.getUserByCookie(req);
 
-  const { path } = context.query;
-  if (typeof path === "string") {
-    // todo: Get page details here..
-  }
+  console.log(user.);
 
   return {
     props: {
-      path: path && typeof path === "string" ? path : null,
+      path: "",
     },
   };
 };
@@ -94,9 +92,5 @@ const EditPageInner = ({
 export default function EditPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  return (
-    <RequireAuthentication showModal>
-      <EditPageInner {...props} />
-    </RequireAuthentication>
-  );
+  return <EditPageInner {...props} />;
 }

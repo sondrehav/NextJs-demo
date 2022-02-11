@@ -7,11 +7,7 @@ import {
   InferGetStaticPropsType,
 } from "next";
 import { ParsedUrlQuery } from "querystring";
-import {
-  BlogListingType,
-  BlogType,
-  getBlogFromIdentifier,
-} from "lib/supabase/blogListing";
+import { BlogType, getBlogFromIdentifier } from "lib/supabase/blogListing";
 import { container } from "lib/classes";
 import {
   ArticleListingType,
@@ -20,6 +16,7 @@ import {
 import ArticlePreview from "components/article/articlePreview";
 import { Fragment } from "react";
 import classNames from "classnames";
+import serviceClient from "lib/supabase/serviceClient";
 
 interface StaticPathType extends ParsedUrlQuery {
   blogIdentifier: string;
@@ -49,8 +46,8 @@ export const getStaticProps = async (
 
   const [blog, articles]: [BlogType | null, ArticleListingType[] | null] =
     await Promise.all([
-      getBlogFromIdentifier({ identifier }),
-      getArticleListing({ blogIdentifier: identifier }),
+      getBlogFromIdentifier({ identifier }, serviceClient()),
+      getArticleListing({ blogIdentifier: identifier }, serviceClient()),
     ]);
 
   if (!blog) return { notFound: true, revalidate: 60 };

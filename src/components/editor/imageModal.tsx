@@ -1,10 +1,5 @@
 import { FormEventHandler, forwardRef } from "react";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import SmallPreview from "components/editor/smallPreview";
 import { Button, Input } from "components/editor/inputs";
 import { FileMeta } from "components/editor/imageUploadEdit";

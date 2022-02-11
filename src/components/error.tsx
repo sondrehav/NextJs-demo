@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  PropsWithChildren,
-  ComponentType,
-  useState,
-} from "react";
+import { createContext, PropsWithChildren, useContext, useState } from "react";
 
 const ErrorContext = createContext<((error: Error) => any) | null>(null);
 

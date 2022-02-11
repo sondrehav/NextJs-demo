@@ -12,6 +12,7 @@ import {
   withAuthenticationContext,
   WithAuthenticationContextProps,
 } from "components/authentication";
+import { smallImagePreviewWrapper } from "lib/classes";
 
 const Modal = dynamic(() => import("components/modal"), { ssr: false });
 
@@ -97,9 +98,7 @@ const ImageUploadEdit = withAuthenticationContext(
           {fields.map((field, index) => (
             <div
               key={field.identifier}
-              className={
-                "relative w-48 h-32 m-2 shadow rounded-md transition-all ring-blue-500 ring-0 hover:ring-2 cursor-pointer overflow-hidden"
-              }
+              className={classNames(smallImagePreviewWrapper, "m-2")}
               onClick={() => {
                 setEditFileMeta([index, field]);
                 setShowModal(true);

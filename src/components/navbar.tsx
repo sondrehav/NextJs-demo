@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Bars from "icons/bars.svg";
 import classNames from "classnames";

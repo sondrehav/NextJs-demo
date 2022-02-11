@@ -4,14 +4,19 @@ import {
   forwardRef,
   PropsWithChildren,
   useContext,
+  useEffect,
+  useState,
 } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "components/editor/inputs";
 import Google from "icons/google.svg";
 import { Session } from "@supabase/gotrue-js";
 import { withRouter } from "next/router";
-import { useUserSessionContext } from "components/userSessionProvider";
-import supabaseClient from "lib/supabase/client";
+import anonClient from "lib/supabase/anonClient";
+import {
+  SupabaseClientProps,
+  withSupabaseClientContext,
+} from "components/supabaseClient";
 
 const redirectTo =
   typeof window !== "undefined" &&
@@ -30,10 +35,9 @@ const AuthenticationContext =
 export const useAuthenticationContext = () => useContext(AuthenticationContext);
 
 const signIn = () =>
-  supabaseClient.auth.signIn({ provider: "google" }, { redirectTo });
+  anonClient().auth.signIn({ provider: "google" }, { redirectTo });
 
 export const AuthenticationModal = forwardRef<HTMLDivElement>((props, ref) => {
-  const client = useUserSessionContext();
   return (
     <div className={"flex flex-row justify-center items-center h-full"}>
       <div
@@ -70,15 +74,42 @@ export const withAuthenticationContext = <T extends object>(
   return component as ComponentType<T>;
 };
 
-export const AuthenticationProvider = ({ children }: PropsWithChildren<{}>) => {
-  return (
-    <AuthenticationContext.Provider value={{ userSession: null }}>
-      {children}
-    </AuthenticationContext.Provider>
-  );
-};
+export const AuthenticationProvider = withSupabaseClientContext(
+  ({ children, client }: PropsWithChildren<SupabaseClientProps>) => {
+    const [userSession, setUserSession] = useState(
+      client?.auth.session() ?? null
+    );
 
-const RedirectToAuth = withRouter(({ router }) => {
+    console.log(userSession);
+
+    useEffect(() => {
+      if (!client) return;
+      setUserSession(client.auth.session());
+      const { data: authStateListener } = client.auth.onAuthStateChange(
+        (event, session) => {
+          fetch("/api/auth", {
+            method: "POST",
+            headers: new Headers({ "Content-Type": "application/json" }),
+            credentials: "same-origin",
+            body: JSON.stringify({ event, session }),
+          }).catch((e) => console.error(e));
+          setUserSession(session);
+        }
+      );
+      return () => {
+        authStateListener?.unsubscribe();
+      };
+    }, [client]);
+
+    return (
+      <AuthenticationContext.Provider value={{ userSession }}>
+        {children}
+      </AuthenticationContext.Provider>
+    );
+  }
+);
+
+const AuthenticationModalContainer = withRouter(({ router }) => {
   return (
     <Modal visible={true} onBgClick={() => router.push("/")}>
       <AuthenticationModal />
@@ -93,7 +124,7 @@ export const RequireAuthentication = withAuthenticationContext(
     showModal = false,
   }: PropsWithChildren<{ showModal?: boolean }> &
     WithAuthenticationContextProps) => {
-    if (showModal) return <RedirectToAuth />;
+    if (showModal) return <AuthenticationModalContainer />;
     if (!userSession) return null;
     return <>{children}</>;
   }

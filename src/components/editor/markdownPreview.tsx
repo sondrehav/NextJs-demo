@@ -1,11 +1,13 @@
-import { HTMLProps, PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { remark } from "remark";
-import { Root } from "remark-parse/lib";
 import Markdown from "components/article/markdownRender";
-import { useFormContext, useWatch, WatchObserver } from "react-hook-form";
-import { ArticleProps, isImageUploaded } from "types/imageProps";
+import { useWatch } from "react-hook-form";
+import {
+  ArticleProps,
+  ImageProps as ImageProps,
+  isImageUploaded,
+} from "types/imageProps";
 import { ImageProvider } from "components/images/imagePreviewProvider";
-import { ImageProps as ImageProps } from "types/imageProps";
 
 const reduceImages = (images: ArticleProps["images"]) =>
   images.reduce((a, v) => {

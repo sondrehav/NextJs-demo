@@ -1,7 +1,6 @@
 import { Image as ImageComponent } from "components/images/image";
 import { ImageProps as ImageProps } from "types/imageProps";
 import { withImageContext } from "components/images/imagePreviewProvider";
-import { HTMLProps } from "react";
 import classNames from "classnames";
 
 const SingleImage = withImageContext<ImageProps>(({ cdn, ...image }) => {

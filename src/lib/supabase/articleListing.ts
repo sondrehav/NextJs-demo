@@ -1,6 +1,5 @@
 import { ImageProps } from "types/imageProps";
-import getClient from "lib/supabase/client";
-import { SArticleType, SBlogType, SupabaseType } from "types/supabaseDataTypes";
+import { SArticleType } from "types/supabaseDataTypes";
 import { SupabaseClient } from "@supabase/supabase-js";
 import getPostgresError from "lib/supabase/error";
 
@@ -48,10 +47,9 @@ const mapArticle = ({ markdown, ...rest }: SArticleType): ArticleType => ({
 
 export const getArticleListing = async (
   { blogIdentifier, limit = 8 }: { blogIdentifier: string; limit?: number },
-  client?: SupabaseClient
+  client: SupabaseClient
 ): Promise<ArticleListingType[] | null> => {
-  const sb = client ?? (await getClient());
-  const { data, error } = await sb
+  const { data, error } = await client
     .from<Omit<SArticleType, "markdown">>("articles")
     .select(
       "blog_identifier, identifier, created_at, title,summary, header_image, is_published"
@@ -67,11 +65,9 @@ export const getArticleFromIdentifier = async (
     articleIdentifier,
     blogIdentifier,
   }: { articleIdentifier: string; blogIdentifier: string },
-  client?: SupabaseClient
+  client: SupabaseClient
 ): Promise<ArticleType | null> => {
-  const sb = client ?? (await getClient());
-
-  const { data, error } = await sb
+  const { data, error } = await client
     .from<SArticleType>("articles")
     .select("*")
     .eq("identifier", articleIdentifier)

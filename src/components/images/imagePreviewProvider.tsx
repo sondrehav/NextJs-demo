@@ -1,10 +1,10 @@
 import {
-  createContext,
-  useContext,
-  PropsWithChildren,
   ComponentType,
-  useState,
+  createContext,
+  PropsWithChildren,
+  useContext,
   useEffect,
+  useState,
 } from "react";
 import { ImageProps as ImageProps } from "types/imageProps";
 

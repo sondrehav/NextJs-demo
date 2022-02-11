@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import {
-  ChangeEvent,
   ComponentProps,
   forwardRef,
   HTMLProps,
@@ -101,6 +100,35 @@ export const Button = forwardRef<
   );
 });
 Button.displayName = "Input";
+
+export const ButtonLink = forwardRef<
+  HTMLAnchorElement,
+  ComponentProps<"a"> & {
+    label?: string;
+    variant?: "primary" | "secondary";
+  }
+>(({ label, variant = "primary", ...props }, ref) => {
+  return (
+    <>
+      <a
+        {...props}
+        ref={ref}
+        className={classNames(
+          buttonCommon,
+          {
+            [buttonPrimary]: variant === "primary",
+            [buttonSecondary]: variant === "secondary",
+          },
+          props.className
+        )}
+      >
+        {label && <span>{label}</span>}
+        {props.children}
+      </a>
+    </>
+  );
+});
+ButtonLink.displayName = "ButtonLink";
 
 export const Checkbox = forwardRef<
   HTMLInputElement,

@@ -9,8 +9,8 @@ import {
   sanitizeIdentifier,
 } from "components/editor/common";
 import {
-  WithAuthenticationContextProps,
   withAuthenticationContext,
+  WithAuthenticationContextProps,
 } from "components/authentication";
 
 const EditorForm = withAuthenticationContext(

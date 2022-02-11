@@ -1,4 +1,4 @@
-import { Controller, FieldPath, Path } from "react-hook-form";
+import { Controller, FieldPath } from "react-hook-form";
 import {
   ControllerProps,
   FieldPathValue,
@@ -6,16 +6,7 @@ import {
   UnpackNestedValue,
   UseFormStateReturn,
 } from "react-hook-form/dist/types";
-import React, {
-  ChangeEvent,
-  ChangeEventHandler,
-  cloneElement,
-  ComponentProps,
-  ComponentType,
-  FormEvent,
-  HTMLProps,
-  ReactElement,
-} from "react";
+import React, { ChangeEvent, ReactElement } from "react";
 import {
   ControllerFieldState,
   ControllerRenderProps,
